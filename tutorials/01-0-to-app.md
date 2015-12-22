@@ -556,3 +556,5 @@ App.controller('AppVM', function($reactive, $scope, $state){
 ```
 
 We are `subscribing` to the `books` publication we added to the server file, and then inside of the `helpers` block we're telling it to find those books.
+
+Let's create a page for the book list.
