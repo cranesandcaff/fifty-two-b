@@ -61,6 +61,8 @@ Type the following into that file. Seriously, type it out. It's tempting to copy
 
 If you left your preview running, after saving the file it should refresh and in place of your empty page you'll have the sentence "Hello World. I am App."
 
+### User Sign Up and Login
+
 Let's add some structure to our apps main template and then add a way for users to sign up and log in.
 
 In your `client/lib/config.js` file we are going to change what template we are using.
@@ -291,3 +293,6 @@ Our login form will be almost exactly like our register form, with another fairl
     </md-card>
 
 The only two differences here are that we changed references of `SignUp` to `Login` and changed our link at the bottom of the form to urge users to sign up if they aren't users.
+
+### Useless to Slightly Less Useless
+Now that our users can log in we should give them the features they were expecting. The ability to add books and look at the books they are planning on reading.
