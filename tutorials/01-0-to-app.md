@@ -509,3 +509,50 @@ App.controller('BookCreateVM', function($reactive, $scope, $state, $mdToast){
   }
 })
 ```
+
+Try adding a book, if you end up on the home page everything is working!
+
+But we still to let our users actually see the books they have.
+
+Our books are stored on the server and never sent to the browser, we need to tell our App that it's okay to send a user the books they've added.
+
+Back in `server/publish-books.js` we'll tell our App to do just that.
+
+Add the following after that first line from earlier.
+
+```javascript
+Meteor.publish('books', function(){
+  if(!this.userId){
+    return this.ready()
+  }
+  return Books.find({
+    createdBy: this.userId
+  })
+})
+```
+
+This tells our app that if there isn't a user it doesn't need to do anything, but if there is return all of the Books it can find created by that user.
+
+Open `client/app.js` and tweak it thusly
+
+```javascript
+App.controller('AppVM', function($reactive, $scope, $state){
+  $reactive(this).attach($scope)
+  this.subscribe('books')
+  this.helpers({
+    currentUser(){
+      return Meteor.user()
+    },
+    books(){
+      return Books.find({
+        createdBy: Meteor.userId()
+      })
+    }
+  })
+  this.logout = () => {
+    Meteor.logout(() => $state.go('app.main'))
+  }
+})
+```
+
+We are `subscribing` to the `books` publication we added to the server file, and then inside of the `helpers` block we're telling it to find those books.
