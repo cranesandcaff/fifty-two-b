@@ -24,3 +24,6 @@ Devoted to thinking like a programmer, learning common patterns and how to apply
 
 ## 0X - Don't Trust It, Test It.
 What it means to test your code, why you should, and how.
+
+## 0X - Tables, Documents, and Graphs. (Or The World of Data Big and Small)
+Introduction to the popular databases, their use cases, and their philosophies. A look at two of the most popular PostgresSQL and MongoDB as well as two of my favorite but less used options RethinkDB and Neo4J.
