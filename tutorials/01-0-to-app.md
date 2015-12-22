@@ -62,3 +62,119 @@ Type the following into that file. Seriously, type it out. It's tempting to copy
 If you left your preview running, after saving the file it should refresh and in place of your empty page you'll have the sentence "Hello World. I am App."
 
 Let's add some structure to our apps main template and then add a way for users to sign up and log in.
+
+In your `client/lib/config.js` file we are going to change what template we are using.
+
+Starting with the chunk of code that looks like this:
+
+  $stateProvider.state('app', {
+    url: '/',
+    template: 'Hello World. I am App.'
+  })
+
+Update it to look like this.
+
+    $stateProvider.state('app', {
+      templateUrl: 'client/app.html'
+    })
+    .state('app.main', {
+      url: '/',
+      template: 'Main App Page'
+    })
+    .state('app.login', {
+      url: '/login',
+      templateUrl: 'client/users/login.html'
+    })
+    .state('app.signUp', {
+      url: '/sign-up',
+      templateUrl: 'client/users/signup.html'
+    })
+
+Open the `client.html` file and type up the following
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <md-button ui-sref="app.main">
+          52B
+        </md-button>
+        <span flex></span>
+        <md-button ui-sref="app.login">
+          Login
+        </md-button>
+        <md-button ui-sref="app.signUp">
+          Sign Up
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-content>
+      <ui-view></ui-view>
+    </md-content>
+
+You should have a toolbar now with 3 links inside of it.
+
+Let's tackle changing that Sign Up page into a pretty little form.
+
+Open up your `client/users/signup.html` file and fill it out thusly.
+
+    <md-card>
+      <md-card-content>
+        <form ng-submit="SignUp.withPassword()" layout="column">
+          <md-input-container>
+            <label>Email Address</label>
+            <input type="email" ng-model="SignUp.user.email">
+          </md-input-container>
+          <md-input-container>
+            <label>Password</label>
+            <input type="password" ng-model="SignUp.user.password">
+          </md-input-container>
+          <md-button type="submit" class="md-raised md-primary">
+            Sign Up
+          </md-button>
+          <div layout>
+            <span flex></span>
+            <a ui-sref="app.login">Already a user? Login here.</a>
+          </div>
+        </form>
+      </md-card-content>
+    </md-card>
+
+
+This creates a `card` with a sign up form, it won't do anything yet.
+
+Now open up `client/users/signup.js` and type this
+
+    App.controller('SignUpVM', function($reactive, $scope, $state, $mdToast){
+      $reactive(this).attach($scope)
+      this.user = {}
+      this.withPassword = () => {
+        Accounts.createUser(this.user, (err, success) => {
+          if(err){
+            return $mdToast.show($mdToast.simple().position('top right').textContent(err.reason))
+          }
+          $state.go('app.main')
+        })
+      }
+    })
+
+One last step before your form lets users sign up, back to our config locate the chunk of code for the sign up.
+
+    .state('app.signUp', {
+      url: '/sign-up',
+      templateUrl: 'client/users/signup.html'
+    })
+
+We're going to add a `property` to it's configuration that attaches our sign up code to the template we made.
+
+Change it to look like this
+
+    .state('app.signUp', {
+      url: '/sign-up',
+      templateUrl: 'client/users/signup.html',
+      controller: 'SignUpVM as SignUp'
+    })
+
+If you're tapping along you might recognize that we created a `Thing` earlier that used the words `SignUpVM` and in our sign up form we had the word `SignUp` in a few different places.
+
+Without going too deep, that `Thing` was our `controller` for the sign up page, it handles the interactions between the user, the app and the associated template.
+
+Try signing up, if it works you should end up back on our home and and nothing will look too different yet.
