@@ -425,9 +425,87 @@ Place that just under the similar looking block of code for `signup`.
 At this point we're lying to our app, we didn't create a `BookCreateVM`, luckily our users don't have a link to the page so it won't throw an error. Let's right this wrong, in our `client/books/form.js` we'll start with a very similar block of code.
 
 ```javascript
-App.controller('BookCreateVM', function($reactive, $scope){
+App.controller('BookCreateVM', function($reactive, $scope, $state, $mdToast){
   $reactive(this).attach($scope)
 })
 ```
 
 Now our app won't throw an error if someone found the page. Let's add a link to it on our main template.
+
+Right before our log out button we'll put an add book link.
+
+```html
+<md-button ui-sref="app.createBook">
+  Add Book
+</md-button>
+```
+
+Place that between the `<span flex></span>` and the button that says logout.
+
+Clicking it will take you to the form you tapped out earlier.
+
+Let's make that work.
+
+Navigate to `client/books/form.js`.
+
+We need to give it a `save` function and an object to write the user input to.
+
+```javascript
+App.controller('BookCreateVM', function($reactive, $scope, $state, $mdToast){
+  $reactive(this).attach($scope)
+  this.model = {}
+  this.save  = () => {
+
+  }
+})
+```
+
+Updating it to make it look like this puts about half way there. Gave it a `model` which is an empty object, and a save function that doesn't do anything.
+
+When the user saves the form we want them to `insert` a model into the apps `Book` collection.
+
+The body of the save function will look like this for now.
+
+```javascript
+Books.insert(this.model, (err, success) => {
+  if(err){
+    console.log('uh oh somethign went wrong.')
+    return console.log(err)
+  }
+  console.log('woo you made a book', success)
+})
+```
+
+This tells the app to `insert` our model object. If it can't insert the book for some reason it'll get an `error` that we log to our browsers console. If it does insert it we'll get a congratulation message in our console instead.
+
+We need just a few more things before we can wrap up this step. For one, we have security in place that will stop any user from adding or editing books. We need to permit logged in users to add or edit books.
+
+In `server/publish-books.js` place this line.
+
+```javascript
+Books.permit(['insert', 'update', 'remove']).ifLoggedIn().apply()
+```
+
+If a user is logged in they can now insert, update and remove Books. But our form doesn't really let them know if their book was added or if it goofed.
+
+
+Back in our `client/books/form.js` file we'll make a few modifications.
+
+If the book doesn't save we'll show the user the error message, if it does we'll redirect them to the home page.
+
+Your completed file should look like this now.
+
+```javascript
+App.controller('BookCreateVM', function($reactive, $scope, $state, $mdToast){
+  $reactive(this).attach($scope)
+  this.model = {}
+  this.save  = () => {
+    Books.insert(this.model, (err, success) => {
+      if(err){
+        return $mdToast.show($mdToast.simple().position('top right').textContent(err.message))
+      }
+      $state.go('app.main')
+    })
+  }
+})
+```
