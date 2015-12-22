@@ -318,10 +318,6 @@ Books.attachSchema({
     type: String,
     optional: true
   },
-  currentlyReading: {
-    type: Boolean,
-    defaultValue: 0
-  },
   pageCount: {
     type: Number,
     defaultValue: 0
@@ -329,14 +325,6 @@ Books.attachSchema({
   currentPage: {
     type: Number,
     defaultValue: 0
-  },
-  why: {
-    type: String,
-    optional: true
-  },
-  review: {
-    type: String,
-    optional: true
   }
 })
 
@@ -373,11 +361,6 @@ Open up `client/books/form.js` and start typing in the following. It's a little 
               <input type="text" ng-model="Book.model.author">
             </md-input-container>
           </div>
-          <div layout-padding>
-            <md-checkbox ng-model="Book.model.currentlyReading">
-              Reading Now
-            </md-checkbox>
-          </div>
         </div>
         <div layout layout-sm="column">
           <md-input-container>
@@ -389,14 +372,6 @@ Open up `client/books/form.js` and start typing in the following. It's a little 
             <input type="number" ng-model="Book.model.pageCount">
           </md-input-container>
         </div>
-        <md-input-container>
-          <label>Why?</label>
-          <textarea ng-model="Book.model.why"></textarea>
-        </md-input-container>
-        <md-input-container ng-show="Book.model._id">
-          <label>Review</label>
-          <textarea ng-model="Book.model.review"></textarea>
-        </md-input-container>
         <div layout layout-align="end center">
           <md-button class="md-raised md-accent" type="submit">
             Save
@@ -533,26 +508,137 @@ Meteor.publish('books', function(){
 
 This tells our app that if there isn't a user it doesn't need to do anything, but if there is return all of the Books it can find created by that user.
 
-Open `client/app.js` and tweak it thusly
+Open `client/books/list.js` and add the following.
 
 ```javascript
-App.controller('AppVM', function($reactive, $scope, $state){
+App.controller('BookListVM', function($reactive, $scope, $state){
   $reactive(this).attach($scope)
   this.subscribe('books')
   this.helpers({
-    currentUser(){
-      return Meteor.user()
-    },
-    books(){
+    list(){
       return Books.find({
         createdBy: Meteor.userId()
       })
     }
   })
-  this.logout = () => {
-    Meteor.logout(() => $state.go('app.main'))
-  }
 })
 ```
 
 We are `subscribing` to the `books` publication we added to the server file, and then inside of the `helpers` block we're telling it to find those books.
+
+Let's create a page for the book list.
+
+We'll repeat the process for creating a page that we used for login, sign up and adding a book. In our `client/lib/config.js` file we'll add another `state`.
+
+Our html for the list looks like this
+
+```html
+<md-card ng-repeat="book in Books.list">
+  <md-card-header>
+    <md-card-header-text>
+      <span class="md-title">{{book.title}}</span>
+      <span class="md-subhead">{{book.author}}</span>
+    </md-card-header-text>
+  </md-card-header>
+  <md-divider></md-divider>
+  <md-card-content>
+    <h3 style="text-align: center;">
+      {{book.currentPage}}
+    </h3>
+    <div layout layout-align="center center">
+      <span>{{book.currentPage}}</span>
+      <md-slider min="0" max="{{book.pageCount}}" ng-model="book.currentPage" flex aria-label="{{book.title}} current page." ng-change="Books.updatePage(book)"></md-slider>
+      <span>{{book.pageCount}}</span>
+    </div>
+  </md-card-content>
+</md-card>
+```
+
+It's a `card` repeated for each book our user has. It shows us the title, the author, how many total pages and what page the user left off at. It has a slider to move their current page as they read it.
+
+Now we need to let our users find that page. We'll update a few files so that a user sees this page when they expect to.
+
+We want them to see it
+- When they click the `52B` button in our toolbar.
+- When they add a book.
+- When they log in.
+
+So we'll edit
+- `client/app.html`
+- `client/users/login.js`
+- `client/books/form.js`
+
+In our `app.html` we want to change the button for logged in users only. It's the second block that has the `ng-show` property.
+
+Change
+```html
+<md-button ui-sref="app.main">
+  52B
+</md-button>
+```
+to
+
+```html
+<md-button ui-sref="app.listBooks">
+  52B
+</md-button>
+```
+
+In both the `login.js` and the `form.js` files we want to change the success action that starts with `$state.go`. It was taking them to `app.main`, but we want it to take them to `app.listBooks`.
+
+Change `$state.go('app.main')` to `$state.go('app.listBooks')` in both files.
+
+Now when we login or add a book we should see all of the books we have.
+
+### Final Step
+A user can add books, look at the books they have, but they can't change their current page.
+
+Let's allow that.
+
+In our book list page we had a line of code that looks like this:
+
+```html
+<md-slider min="0" max="{{book.pageCount}}" ng-model="book.currentPage" flex aria-label="{{book.title}} current page." ng-change="Books.updatePage(book)"></md-slider>
+```
+
+It's our slider for page position. It has a lot of properties compared to some other elements we've looked closly at. We're concerned with the bit inside of `ng-change`. This tells our app that when the slider it changes it should call `Books.updatePage(book)` for that book.
+
+In our `client/books/list.js` file we'll add that function.
+
+
+Our final file now looks like this.
+
+```javascript
+App.controller('BookListVM', function($reactive, $scope, $state){
+  $reactive(this).attach($scope)
+  this.subscribe('books')
+  this.helpers({
+    list(){
+      return Books.find({
+        createdBy: Meteor.userId()
+      })
+    }
+  })
+  this.updatePage = (book) => {
+    Books.update(book._id, {
+      $set: {
+        currentPage: book.currentPage
+      }
+    })
+  }
+})
+```
+
+The addition is that last little bit.
+
+It says, take the book you're being given, and in the database set it's current page to the users change.
+
+Try it out.
+
+You should now have an app that allows a user to add books and change their current page.
+
+### Slightly less useless, but not yet useful.
+While we did make an app that fulfills our original purpose of adding books and checking off how far we got into them it's not very useful. User's can't remove a book, or leave themselves a review of the book. It doesn't give special focus to the book they are reading right now or hide books they've finished.
+
+### Next Episode
+In the next tutorial we'll reflect on what we've written, and add those missing features.
