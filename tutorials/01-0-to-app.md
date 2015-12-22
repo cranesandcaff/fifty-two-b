@@ -6,22 +6,53 @@ We'll focus almost completely and the "What" and "How" this tutorial, follow alo
 
 This chapter isn't meant to teach you much about programming or app development. It's a primer to give you a base and familiarity. You shouldn't need to know much about programming to follow along.
 
-### Install Git
-Git is a version control system. It allows programmers to track changes in their code and work work together in a simple manner. Go here(https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and follow the instructions. Git is a really big Thing with a lot of complexity, but thankfully you can get by with knowing a few simple commands most of the time, and I'll be giving those to you.
+### Avoiding Set Up with Cloud9
+Cloud9 is an web app that let's your program online in your browser. Using it means you don't have to install Meteor or Git on your computer or choose a code editor. If you have those things feel free to skip this part.
 
-### Install Meteor
-Go here(https://www.meteor.com/install), follow the instructions.
+Sign up for Cloud9(http://c9.io), and create a new workspace.
 
-### What We're Building
-We're making a simple application for users to add books they are reading this year, track their page and write a review when they are done.
+On the new workspace form, give it a name and then paste `https://github.com/cranesandcaff/fifty-two-b.git` into the `Clone from Git or Mercurial URL`.
 
-### Starting Line
-You'll need to get a copy of the application base. It will contain a lot of the configuration to make this a bit easier. On your command line run the following.
+Click the `Meteor` template and the button to create the work space.
 
-    $ git clone https://github.com/cranesandcaff/fifty-two-b.git
+### A Workspace
+Your workspace is where your projects, editor and command line all exist. You should see a list of files on the left, a main window for the editor and at the bottom of your page should be a panel labeled `bash`. Click inside of that panel and type `meteor --port $IP:$PORT`, press enter and C9 will start your meteor app.
 
-Alternatively you could download the zip from this page(https://github.com/cranesandcaff/fifty-two-b).
+This might take a moment, it took a few for me. Go grab a coffee or something.
 
-Open the folder in your text editor of choice, I use Githubs Atom(https://atom.io/).
+### Blank Slate
+Eventually the bottom panel will tell you that your app is running. Super nifty. You can check a preview of your app by clicking the button up top appropriately labeled `preview`. It'll open a browser window inside of your current one running your app. Which should be completely blank right now.
 
-Inside you'll find an HTML page `fifty-two-b.html`, a license, a readme and a folder labelled tutorials.
+### Your First Brush Strokes
+I've set up your first template for you. The file `fifty-two-b.html` is a barebones html file with only a few lines of code. You can give it a look over if you'd like, but we won't be editing it.
+
+Create a new folder labeled `client`, and inside of that create a folder labeled `lib`, finally inside of that folder create a file labeled `app.js`
+
+Type the following into that file. Seriously, type it out. It's tempting to copy and paste it especially if you don't know what any of it does but typing it helps you think about what you're doing. Fixing errors related to typos is also really helpful, even if it's super frustrating. We'll go in depth on what's happening here in a future episode.
+
+    App = angular.module('fiftyTwoB', [
+      'angular-meteor',
+      'ngMaterial',
+      'ngAnimate',
+      'ngAria',
+      'ui.router'
+    ])
+
+    App.config(function($stateProvider, $urlRouterProvider, $locationProvider){
+      $locationProvider.html5Mode(true)
+      $urlRouterProvider.otherwise('/')
+      $stateProvider.state('app', {
+        url: '/',
+        template: 'Hello World. I am App.'
+      })
+    })
+
+    function onReady(){
+      angular.bootstrap(document, ['fiftyTwoB'])
+    }
+
+    if(Meteor.isCordova){
+      angular.element(document).on('deviceready', onReady)
+    } else {
+      angular.element(document).ready(onReady)
+    }
