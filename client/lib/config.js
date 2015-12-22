@@ -19,7 +19,8 @@ App.config(function($stateProvider, $urlRouterProvider, $locationProvider){
   })
   .state('app.login', {
     url: '/login',
-    templateUrl: 'client/users/login.html'
+    templateUrl: 'client/users/login.html',
+    controller: 'LoginVM as Login'
   })
   .state('app.signUp', {
     url: '/sign-up',

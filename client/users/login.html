@@ -1,0 +1,21 @@
+<md-card>
+  <md-card-content>
+    <form ng-submit="Login.withPassword()" layout="column">
+      <md-input-container>
+        <label>Email Address</label>
+        <input type="email" ng-model="Login.user.email">
+      </md-input-container>
+      <md-input-container>
+        <label>Password</label>
+        <input type="password" ng-model="Login.user.password">
+      </md-input-container>
+      <md-button type="submit" class="md-raised md-primary">
+        Sign Up
+      </md-button>
+      <div layout>
+        <span flex></span>
+        <a ui-sref="app.signUp">Not a user? Sign up here.</a>
+      </div>
+    </form>
+  </md-card-content>
+</md-card>

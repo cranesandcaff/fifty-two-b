@@ -246,3 +246,48 @@ Inside of the toolbar code, we're going to update it to this.
 We added a directive `ng-hide` to the original element and made it equal to `App.currentUser`, then we created a new element that does the opposite, it has a `ng-show` directive assigned to the same thing. If our App has a user it'll hide the first toolbar and show the second, vice versa if there isn't a user.
 
 Try clicking the logout button and watch the buttons change.
+
+But now you're logged out and that login page is still empty, that's not great.
+
+In our `client/users/login.js` file we're going to create another controller that will look very similar to our `RegisterVM`.
+
+    App.controller('LoginVM', function($reactive, $scope, $state, $mdToast){
+      $reactive(this).attach($scope)
+      this.user = {}
+      this.withPassword = () => {
+        Meteor.loginWithPassword(this.user.email, this.user.password, (err, success) => {
+          if(err){
+            return $mdToast.show($mdToast.simple().position('top right').textContent(err.reason))
+          }
+          $state.go('app.main')
+        })
+      }
+    })
+
+It has a minor change in comparison to our `RegisterVM`, hiding inside of the `this.withPassword` chunk we changed `Accounts.createUser` to `Meteor.loginWithPassword`, and instead of accepting just the `this.user` you have to give it `this.user.email` and `this.user.password`.
+
+Our login form will be almost exactly like our register form, with another fairly small change.
+
+    <md-card>
+      <md-card-content>
+        <form ng-submit="Login.withPassword()" layout="column">
+          <md-input-container>
+            <label>Email Address</label>
+            <input type="email" ng-model="Login.user.email">
+          </md-input-container>
+          <md-input-container>
+            <label>Password</label>
+            <input type="password" ng-model="Login.user.password">
+          </md-input-container>
+          <md-button type="submit" class="md-raised md-primary">
+            Sign Up
+          </md-button>
+          <div layout>
+            <span flex></span>
+            <a ui-sref="app.signUp">Not a user? Sign up here.</a>
+          </div>
+        </form>
+      </md-card-content>
+    </md-card>
+
+The only two differences here are that we changed references of `SignUp` to `Login` and changed our link at the bottom of the form to urge users to sign up if they aren't users.
