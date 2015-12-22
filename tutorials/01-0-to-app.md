@@ -56,3 +56,5 @@ Type the following into that file. Seriously, type it out. It's tempting to copy
     } else {
       angular.element(document).ready(onReady)
     }
+
+If you left your preview running, after saving the file it should refresh and in place of your empty page you'll have the sentence "Hello World. I am App."
