@@ -10,7 +10,8 @@ App.config(function($stateProvider, $urlRouterProvider, $locationProvider){
   $locationProvider.html5Mode(true)
   $urlRouterProvider.otherwise('/')
   $stateProvider.state('app', {
-    templateUrl: 'client/app.html'
+    templateUrl: 'client/app.html',
+    controller: 'AppVM as App'
   })
   .state('app.main', {
     url: '/',

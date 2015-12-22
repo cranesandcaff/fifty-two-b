@@ -4,7 +4,7 @@
 ### Summary
 We'll focus almost completely and the "What" and "How" this tutorial, follow along and write the code in your own editor. Avoid copying and pasting, retyping it will make you think about what you're typing.
 
-This chapter isn't meant to teach you much about programming or app development. It's a primer to give you a base and familiarity. You shouldn't need to know much about programming to follow along.
+This chapter isn't meant to teach you much about programming or app development. It's a primer to give you a base and familiarity. You shouldn't need to know much about programming to follow along, but it helps.
 
 ### Avoiding Set Up with Cloud9
 Cloud9 is an web app that let's your program online in your browser. Using it means you don't have to install Meteor or Git on your computer or choose a code editor. If you have those things feel free to skip this part.
@@ -178,3 +178,71 @@ If you're tapping along you might recognize that we created a `Thing` earlier th
 Without going too deep, that `Thing` was our `controller` for the sign up page, it handles the interactions between the user, the app and the associated template.
 
 Try signing up, if it works you should end up back on our home and and nothing will look too different yet.
+
+Since we're signed up and signed in now we don't really want to see the sign up or login links any more, and we need a link to log out too.
+
+We're going to create another `controller`, this one for our entire app. It'll provide the log out feature.
+
+Make your `client/app.js` look like this.
+
+    App.controller('AppVM', function($reactive, $scope, $state){
+      $reactive(this).attach($scope)
+      this.helpers({
+        currentUser(){
+          return Meteor.user()
+        }
+      })
+      this.logout = () => {
+        Meteor.logout(() => $state.go('app.main'))
+      }
+    })
+
+
+Before this `controller` affects the app template we need to attach it. The same way we did with the sign up controller, in `client/lib/config.js` find the chunk related to our app, it'll look like this
+
+    $stateProvider.state('app', {
+      templateUrl: 'client/app.html'
+    })
+
+Update it with our controller property.
+
+    $stateProvider.state('app', {
+      templateUrl: 'client/app.html',
+      controller: 'AppVM as App'
+    })
+
+The above is what you should have.
+
+Now that the controller is attached to our app anything we attach to the `AppVM` will be available to us through the `App` variable in our templates.
+
+Speaking of, navigate to `client/app.html`, so that we can change what a user who is logged in sees.
+
+Inside of the toolbar code, we're going to update it to this.
+
+    <md-toolbar>
+      <div class="md-toolbar-tools" ng-hide="App.currentUser">
+        <md-button ui-sref="app.main">
+          52B
+        </md-button>
+        <span flex></span>
+        <md-button ui-sref="app.login">
+          Login
+        </md-button>
+        <md-button ui-sref="app.signUp">
+          Sign Up
+        </md-button>
+      </div>
+      <div class="md-toolbar-tools" ng-show="App.currentUser">
+        <md-button ui-sref="app.main">
+          52B
+        </md-button>
+        <span flex></span>
+        <md-button ng-click="App.logout()">
+          Logout
+        </md-button>
+      </div>
+    </md-toolbar>
+
+We added a directive `ng-hide` to the original element and made it equal to `App.currentUser`, then we created a new element that does the opposite, it has a `ng-show` directive assigned to the same thing. If our App has a user it'll hide the first toolbar and show the second, vice versa if there isn't a user.
+
+Try clicking the logout button and watch the buttons change.
