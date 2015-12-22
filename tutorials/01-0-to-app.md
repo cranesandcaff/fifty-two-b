@@ -429,3 +429,5 @@ App.controller('BookCreateVM', function($reactive, $scope){
   $reactive(this).attach($scope)
 })
 ```
+
+Now our app won't throw an error if someone found the page. Let's add a link to it on our main template.
