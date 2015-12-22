@@ -1,0 +1,55 @@
+<div layout layout-align="center center">
+  <md-card flex-gt-sm="50">
+    <md-card-header>
+      <md-card-header-text>
+        <span class="md-title" ng-show="!Book.model._id">Add Book</span>
+        <span class="md-title" ng-show="Book.model._id">Edit Book</span>
+      </md-card-header-text>
+    </md-card-header>
+    <md-divider></md-divider>
+    <md-card-content>
+      <form ng-submit="Book.save()" layout="column">
+        <div layout layout-sm="column">
+          <div layout>
+            <md-input-container>
+              <label>Title</label>
+              <input type="text" ng-model="Book.model.title" ng-required="true">
+            </md-input-container>
+            <md-input-container>
+              <label>Author</label>
+              <input type="text" ng-model="Book.model.author">
+            </md-input-container>
+          </div>
+          <div layout-padding>
+            <md-checkbox ng-model="Book.model.currentlyReading">
+              Reading Now
+            </md-checkbox>
+          </div>
+        </div>
+        <div layout layout-sm="column">
+          <md-input-container>
+            <label>Current Page</label>
+            <input type="number" ng-model="Book.model.currentPage">
+          </md-input-container>
+          <md-input-container>
+            <label>Page Count</label>
+            <input type="number" ng-model="Book.model.pageCount">
+          </md-input-container>
+        </div>
+        <md-input-container>
+          <label>Why?</label>
+          <textarea ng-model="Book.model.why"></textarea>
+        </md-input-container>
+        <md-input-container ng-show="Book.model._id">
+          <label>Review</label>
+          <textarea ng-model="Book.model.review"></textarea>
+        </md-input-container>
+        <div layout layout-align="end center">
+          <md-button class="md-raised md-accent" type="submit">
+            Save
+          </md-button>
+        </div>
+      </form>
+    </md-card-content>
+  </md-card>
+</div>

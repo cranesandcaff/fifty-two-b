@@ -27,6 +27,11 @@ App.config(function($stateProvider, $urlRouterProvider, $locationProvider){
     templateUrl: 'client/users/signup.html',
     controller: 'SignUpVM as SignUp'
   })
+  .state('app.createBook', {
+    url: '/books/create',
+    templateUrl: 'client/books/form.html',
+    controller: 'BookCreateVM as Book'
+  })
 })
 
 function onReady(){

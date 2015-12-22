@@ -302,3 +302,130 @@ The only two differences here are that we changed references of `SignUp` to `Log
 
 ### Useless to Slightly Less Useless
 Now that our users can log in we should give them the features they were expecting. The ability to add books and look at the books they are planning on reading.
+
+### Adding a Book Thing
+Allowing users to add a book to their collection requires us to create a `Book` as a `Thing` in our apps universe. And oddly enough we call that `Thing` a collection or model depending on how you're referring to it.
+
+Navigate to `models/book.js` and start with this.
+```javascript
+Books = new Meteor.Collection('books')
+Books.attachBehaviour('timestampable')
+Books.attachSchema({
+  title: {
+    type: String
+  },
+  author: {
+    type: String,
+    optional: true
+  },
+  currentlyReading: {
+    type: Boolean,
+    defaultValue: 0
+  },
+  pageCount: {
+    type: Number,
+    defaultValue: 0
+  },
+  currentPage: {
+    type: Number,
+    defaultValue: 0
+  },
+  why: {
+    type: String,
+    optional: true
+  },
+  review: {
+    type: String,
+    optional: true
+  }
+})
+
+```
+This is our Book `model`. It's a collection labeled `books`, the line after we declare `Books` as a thing we assign it a behaviour, `timestampable`. This puts a time stamp on who created the book, when they created it and if it's updated it'll tell us who updated it and when.
+
+Finally we describe what a `Book` is made out of in our app. The `attachSchema` chunk of code creates a `schema`, an outline of what properties a book should have.
+
+### Adding Books
+Now that our app knows what a `Book` is we can let our users add one through a form.
+
+Open up `client/books/form.js` and start typing in the following. It's a little larger than our login or sign up forms but it's very similar.
+
+```html
+<div layout layout-align="center center">
+  <md-card flex-gt-sm="50">
+    <md-card-header>
+      <md-card-header-text>
+        <span class="md-title" ng-show="!Book.model._id">Add Book</span>
+        <span class="md-title" ng-show="Book.model._id">Edit Book</span>
+      </md-card-header-text>
+    </md-card-header>
+    <md-divider></md-divider>
+    <md-card-content>
+      <form ng-submit="Book.save()" layout="column">
+        <div layout layout-sm="column">
+          <div layout>
+            <md-input-container>
+              <label>Title</label>
+              <input type="text" ng-model="Book.model.title" ng-required="true">
+            </md-input-container>
+            <md-input-container>
+              <label>Author</label>
+              <input type="text" ng-model="Book.model.author">
+            </md-input-container>
+          </div>
+          <div layout-padding>
+            <md-checkbox ng-model="Book.model.currentlyReading">
+              Reading Now
+            </md-checkbox>
+          </div>
+        </div>
+        <div layout layout-sm="column">
+          <md-input-container>
+            <label>Current Page</label>
+            <input type="number" ng-model="Book.model.currentPage">
+          </md-input-container>
+          <md-input-container>
+            <label>Page Count</label>
+            <input type="number" ng-model="Book.model.pageCount">
+          </md-input-container>
+        </div>
+        <md-input-container>
+          <label>Why?</label>
+          <textarea ng-model="Book.model.why"></textarea>
+        </md-input-container>
+        <md-input-container ng-show="Book.model._id">
+          <label>Review</label>
+          <textarea ng-model="Book.model.review"></textarea>
+        </md-input-container>
+        <div layout layout-align="end center">
+          <md-button class="md-raised md-accent" type="submit">
+            Save
+          </md-button>
+        </div>
+      </form>
+    </md-card-content>
+  </md-card>
+</div>
+```
+Typing along some patterns should be showing up to you, when we want our App to do something we often attach a capital cased word inside of an HTML element, like `Book.save()` or `Login.withPassword()`.
+
+We need a way to get to our shiny new form, and we need to give it some behaviour with a `controller` as we did with `Login` and `SignUp`.
+
+Back to our trusty `client/lib/config.js` file let's add another `state`.
+
+```javascript
+.state('app.createBook', {
+  url: '/books/create',
+  templateUrl: 'client/books/form.html',
+  controller: 'BookCreateVM as Book'
+})
+```
+Place that just under the similar looking block of code for `signup`.
+
+At this point we're lying to our app, we didn't create a `BookCreateVM`, luckily our users don't have a link to the page so it won't throw an error. Let's right this wrong, in our `client/books/form.js` we'll start with a very similar block of code.
+
+```javascript
+App.controller('BookCreateVM', function($reactive, $scope){
+  $reactive(this).attach($scope)
+})
+```
