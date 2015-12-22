@@ -6,7 +6,7 @@ App.controller('BookCreateVM', function($reactive, $scope, $state, $mdToast){
       if(err){
         return $mdToast.show($mdToast.simple().position('top right').textContent(err.message))
       }
-      $state.go('app.main')
+      $state.go('app.listBooks')
     })
   }
 })

@@ -32,6 +32,11 @@ App.config(function($stateProvider, $urlRouterProvider, $locationProvider){
     templateUrl: 'client/books/form.html',
     controller: 'BookCreateVM as Book'
   })
+  .state('app.listBooks', {
+    url: '/books',
+    templateUrl: 'client/books/list.html',
+    controller: 'BookListVM as Books'
+  })
 })
 
 function onReady(){

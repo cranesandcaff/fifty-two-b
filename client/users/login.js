@@ -6,7 +6,7 @@ App.controller('LoginVM', function($reactive, $scope, $state, $mdToast){
       if(err){
         return $mdToast.show($mdToast.simple().position('top right').textContent(err.reason))
       }
-      $state.go('app.main')
+      $state.go('app.listBooks')
     })
   }
 })

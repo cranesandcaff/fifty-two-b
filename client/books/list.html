@@ -1,0 +1,19 @@
+<md-card ng-repeat="book in Books.list">
+  <md-card-header>
+    <md-card-header-text>
+      <span class="md-title">{{book.title}}</span>
+      <span class="md-subhead">{{book.author}}</span>
+    </md-card-header-text>
+  </md-card-header>
+  <md-divider></md-divider>
+  <md-card-content>
+    <h3 style="text-align: center;">
+      {{book.currentPage}}
+    </h3>
+    <div layout layout-align="center center">
+      <span>{{book.currentPage}}</span>
+      <md-slider min="0" max="{{book.pageCount}}" ng-model="book.currentPage" flex aria-label="{{book.title}} current page." ng-change="Books.updatePage(book)"></md-slider>
+      <span>{{book.pageCount}}</span>
+    </div>
+  </md-card-content>
+</md-card>
