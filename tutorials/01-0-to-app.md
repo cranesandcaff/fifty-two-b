@@ -26,7 +26,9 @@ Eventually the bottom panel will tell you that your app is running. Super nifty.
 ### Your First Brush Strokes
 I've set up your first template for you. The file `fifty-two-b.html` is a barebones html file with only a few lines of code. You can give it a look over if you'd like, but we won't be editing it.
 
-Create a new folder labeled `client`, and inside of that create a folder labeled `lib`, finally inside of that folder create a file labeled `app.js`
+I also created all of the folders and files you'll need, but they are empty right now. Locate the file `config.js` inside of the `client/lib/` directory.
+
+*Directory is the jargon for folder*
 
 Type the following into that file. Seriously, type it out. It's tempting to copy and paste it especially if you don't know what any of it does but typing it helps you think about what you're doing. Fixing errors related to typos is also really helpful, even if it's super frustrating. We'll go in depth on what's happening here in a future episode.
 
@@ -58,3 +60,5 @@ Type the following into that file. Seriously, type it out. It's tempting to copy
     }
 
 If you left your preview running, after saving the file it should refresh and in place of your empty page you'll have the sentence "Hello World. I am App."
+
+Let's add some structure to our apps main template and then add a way for users to sign up and log in.
