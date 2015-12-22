@@ -8,10 +8,6 @@ Books.attachSchema({
     type: String,
     optional: true
   },
-  currentlyReading: {
-    type: Boolean,
-    defaultValue: 0
-  },
   pageCount: {
     type: Number,
     defaultValue: 0
@@ -19,13 +15,5 @@ Books.attachSchema({
   currentPage: {
     type: Number,
     defaultValue: 0
-  },
-  why: {
-    type: String,
-    optional: true
-  },
-  review: {
-    type: String,
-    optional: true
   }
 })

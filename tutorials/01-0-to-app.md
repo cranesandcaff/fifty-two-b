@@ -318,10 +318,6 @@ Books.attachSchema({
     type: String,
     optional: true
   },
-  currentlyReading: {
-    type: Boolean,
-    defaultValue: 0
-  },
   pageCount: {
     type: Number,
     defaultValue: 0
@@ -329,14 +325,6 @@ Books.attachSchema({
   currentPage: {
     type: Number,
     defaultValue: 0
-  },
-  why: {
-    type: String,
-    optional: true
-  },
-  review: {
-    type: String,
-    optional: true
   }
 })
 
@@ -373,11 +361,6 @@ Open up `client/books/form.js` and start typing in the following. It's a little 
               <input type="text" ng-model="Book.model.author">
             </md-input-container>
           </div>
-          <div layout-padding>
-            <md-checkbox ng-model="Book.model.currentlyReading">
-              Reading Now
-            </md-checkbox>
-          </div>
         </div>
         <div layout layout-sm="column">
           <md-input-container>
@@ -389,14 +372,6 @@ Open up `client/books/form.js` and start typing in the following. It's a little 
             <input type="number" ng-model="Book.model.pageCount">
           </md-input-container>
         </div>
-        <md-input-container>
-          <label>Why?</label>
-          <textarea ng-model="Book.model.why"></textarea>
-        </md-input-container>
-        <md-input-container ng-show="Book.model._id">
-          <label>Review</label>
-          <textarea ng-model="Book.model.review"></textarea>
-        </md-input-container>
         <div layout layout-align="end center">
           <md-button class="md-raised md-accent" type="submit">
             Save
@@ -661,3 +636,9 @@ It says, take the book you're being given, and in the database set it's current 
 Try it out.
 
 You should now have an app that allows a user to add books and change their current page.
+
+### Slightly less useless, but not yet useful.
+While we did make an app that fulfills our original purpose of adding books and checking off how far we got into them it's not very useful. User's can't remove a book, or leave themselves a review of the book. It doesn't give special focus to the book they are reading right now or hide books they've finished.
+
+### Next Episode
+In the next tutorial we'll reflect on what we've written, and add those missing features.
