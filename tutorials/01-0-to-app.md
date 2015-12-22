@@ -32,32 +32,34 @@ I also created all of the folders and files you'll need, but they are empty righ
 
 Type the following into that file. Seriously, type it out. It's tempting to copy and paste it especially if you don't know what any of it does but typing it helps you think about what you're doing. Fixing errors related to typos is also really helpful, even if it's super frustrating. We'll go in depth on what's happening here in a future episode.
 
-    App = angular.module('fiftyTwoB', [
-      'angular-meteor',
-      'ngMaterial',
-      'ngAnimate',
-      'ngAria',
-      'ui.router'
-    ])
+```javascript
+App = angular.module('fiftyTwoB', [
+  'angular-meteor',
+  'ngMaterial',
+  'ngAnimate',
+  'ngAria',
+  'ui.router'
+])
 
-    App.config(function($stateProvider, $urlRouterProvider, $locationProvider){
-      $locationProvider.html5Mode(true)
-      $urlRouterProvider.otherwise('/')
-      $stateProvider.state('app', {
-        url: '/',
-        template: 'Hello World. I am App.'
-      })
-    })
+App.config(function($stateProvider, $urlRouterProvider, $locationProvider){
+  $locationProvider.html5Mode(true)
+  $urlRouterProvider.otherwise('/')
+  $stateProvider.state('app', {
+    url: '/',
+    template: 'Hello World. I am App.'
+  })
+})
 
-    function onReady(){
-      angular.bootstrap(document, ['fiftyTwoB'])
-    }
+function onReady(){
+  angular.bootstrap(document, ['fiftyTwoB'])
+}
 
-    if(Meteor.isCordova){
-      angular.element(document).on('deviceready', onReady)
-    } else {
-      angular.element(document).ready(onReady)
-    }
+if(Meteor.isCordova){
+  angular.element(document).on('deviceready', onReady)
+} else {
+  angular.element(document).ready(onReady)
+}
+```
 
 If you left your preview running, after saving the file it should refresh and in place of your empty page you'll have the sentence "Hello World. I am App."
 
@@ -69,13 +71,16 @@ In your `client/lib/config.js` file we are going to change what template we are 
 
 Starting with the chunk of code that looks like this:
 
+  ```javascript
   $stateProvider.state('app', {
     url: '/',
     template: 'Hello World. I am App.'
   })
+  ```
 
 Update it to look like this.
 
+    ```javascript
     $stateProvider.state('app', {
       templateUrl: 'client/app.html'
     })
@@ -91,9 +96,10 @@ Update it to look like this.
       url: '/sign-up',
       templateUrl: 'client/users/signup.html'
     })
+    ```
 
 Open the `client.html` file and type up the following
-
+```html
     <md-toolbar>
       <div class="md-toolbar-tools">
         <md-button ui-sref="app.main">
@@ -111,13 +117,13 @@ Open the `client.html` file and type up the following
     <md-content>
       <ui-view></ui-view>
     </md-content>
-
+```
 You should have a toolbar now with 3 links inside of it.
 
 Let's tackle changing that Sign Up page into a pretty little form.
 
 Open up your `client/users/signup.html` file and fill it out thusly.
-
+```html
     <md-card>
       <md-card-content>
         <form ng-submit="SignUp.withPassword()" layout="column">
@@ -139,12 +145,12 @@ Open up your `client/users/signup.html` file and fill it out thusly.
         </form>
       </md-card-content>
     </md-card>
-
+```
 
 This creates a `card` with a sign up form, it won't do anything yet.
 
 Now open up `client/users/signup.js` and type this
-
+```javascript
     App.controller('SignUpVM', function($reactive, $scope, $state, $mdToast){
       $reactive(this).attach($scope)
       this.user = {}
@@ -157,24 +163,24 @@ Now open up `client/users/signup.js` and type this
         })
       }
     })
-
+```
 One last step before your form lets users sign up, back to our config locate the chunk of code for the sign up.
-
+```javascript
     .state('app.signUp', {
       url: '/sign-up',
       templateUrl: 'client/users/signup.html'
     })
-
+```
 We're going to add a `property` to it's configuration that attaches our sign up code to the template we made.
 
 Change it to look like this
-
+```
     .state('app.signUp', {
       url: '/sign-up',
       templateUrl: 'client/users/signup.html',
       controller: 'SignUpVM as SignUp'
     })
-
+```
 If you're tapping along you might recognize that we created a `Thing` earlier that used the words `SignUpVM` and in our sign up form we had the word `SignUp` in a few different places.
 
 Without going too deep, that `Thing` was our `controller` for the sign up page, it handles the interactions between the user, the app and the associated template.
@@ -186,7 +192,7 @@ Since we're signed up and signed in now we don't really want to see the sign up 
 We're going to create another `controller`, this one for our entire app. It'll provide the log out feature.
 
 Make your `client/app.js` look like this.
-
+```javascript
     App.controller('AppVM', function($reactive, $scope, $state){
       $reactive(this).attach($scope)
       this.helpers({
@@ -198,21 +204,21 @@ Make your `client/app.js` look like this.
         Meteor.logout(() => $state.go('app.main'))
       }
     })
-
+```
 
 Before this `controller` affects the app template we need to attach it. The same way we did with the sign up controller, in `client/lib/config.js` find the chunk related to our app, it'll look like this
-
+```javascript
     $stateProvider.state('app', {
       templateUrl: 'client/app.html'
     })
-
+```
 Update it with our controller property.
-
+```javascript
     $stateProvider.state('app', {
       templateUrl: 'client/app.html',
       controller: 'AppVM as App'
     })
-
+```
 The above is what you should have.
 
 Now that the controller is attached to our app anything we attach to the `AppVM` will be available to us through the `App` variable in our templates.
@@ -220,7 +226,7 @@ Now that the controller is attached to our app anything we attach to the `AppVM`
 Speaking of, navigate to `client/app.html`, so that we can change what a user who is logged in sees.
 
 Inside of the toolbar code, we're going to update it to this.
-
+```html
     <md-toolbar>
       <div class="md-toolbar-tools" ng-hide="App.currentUser">
         <md-button ui-sref="app.main">
@@ -244,7 +250,7 @@ Inside of the toolbar code, we're going to update it to this.
         </md-button>
       </div>
     </md-toolbar>
-
+```
 We added a directive `ng-hide` to the original element and made it equal to `App.currentUser`, then we created a new element that does the opposite, it has a `ng-show` directive assigned to the same thing. If our App has a user it'll hide the first toolbar and show the second, vice versa if there isn't a user.
 
 Try clicking the logout button and watch the buttons change.
@@ -252,7 +258,7 @@ Try clicking the logout button and watch the buttons change.
 But now you're logged out and that login page is still empty, that's not great.
 
 In our `client/users/login.js` file we're going to create another controller that will look very similar to our `RegisterVM`.
-
+```javascript
     App.controller('LoginVM', function($reactive, $scope, $state, $mdToast){
       $reactive(this).attach($scope)
       this.user = {}
@@ -265,11 +271,11 @@ In our `client/users/login.js` file we're going to create another controller tha
         })
       }
     })
-
+```
 It has a minor change in comparison to our `RegisterVM`, hiding inside of the `this.withPassword` chunk we changed `Accounts.createUser` to `Meteor.loginWithPassword`, and instead of accepting just the `this.user` you have to give it `this.user.email` and `this.user.password`.
 
 Our login form will be almost exactly like our register form, with another fairly small change.
-
+```html
     <md-card>
       <md-card-content>
         <form ng-submit="Login.withPassword()" layout="column">
@@ -291,7 +297,7 @@ Our login form will be almost exactly like our register form, with another fairl
         </form>
       </md-card-content>
     </md-card>
-
+```
 The only two differences here are that we changed references of `SignUp` to `Login` and changed our link at the bottom of the form to urge users to sign up if they aren't users.
 
 ### Useless to Slightly Less Useless
